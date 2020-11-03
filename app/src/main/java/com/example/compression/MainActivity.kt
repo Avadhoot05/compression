@@ -96,6 +96,4 @@ class MainActivity : AppCompatActivity(),Communicator {
             Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
         }
     }
-
-
 }
