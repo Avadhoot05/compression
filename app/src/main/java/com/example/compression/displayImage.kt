@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
+import kotlinx.android.synthetic.main.fragment_display_image.*
 
 import java.io.File
 import java.io.FileOutputStream
@@ -41,8 +41,11 @@ class displayImage : Fragment() {
 
         imageURI  = arguments?.getParcelable("image")
 
-        val intent = CropImage.activity(imageURI).getIntent(getContext()!!);
+
+
+        val intent = CropImage.activity(imageURI).setFixAspectRatio(true).setAutoZoomEnabled(false).getIntent(context!!);
         startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+
 
         //permissionsForSave()
 
@@ -53,7 +56,7 @@ class displayImage : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode==CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
             var result  = CropImage.getActivityResult(data);
-            ret_CroppedBitmap = result.getUri()
+            ret_CroppedBitmap = result.uri
             image_view.setImageURI(ret_CroppedBitmap)
         }
     }
@@ -62,9 +65,9 @@ class displayImage : Fragment() {
 
     private fun permissionsForSave( ) {
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-            if(ActivityCompat.checkSelfPermission(getContext()!!,android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+            if(ActivityCompat.checkSelfPermission(context!!,android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
                 Toast.makeText(activity,"ask",Toast.LENGTH_LONG).show()
-                ActivityCompat.requestPermissions(getActivity()!!, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),100)
+                ActivityCompat.requestPermissions(activity!!, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),100)
             }
             else{
                 saveImage()
@@ -76,14 +79,14 @@ class displayImage : Fragment() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        Toast.makeText(getActivity(), "Code${requestCode.toString()}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity, "Code${requestCode.toString()}", Toast.LENGTH_SHORT).show()
        if(requestCode==100) {
            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                saveImage()
            }
        }
         else{
-           Toast.makeText(getActivity(), "Permission Denied", Toast.LENGTH_SHORT).show()
+           Toast.makeText(activity, "Permission Denied", Toast.LENGTH_SHORT).show()
        }
     }
 
@@ -99,15 +102,15 @@ class displayImage : Fragment() {
                 imageToDisplay.compress(Bitmap.CompressFormat.JPEG,100,stream)
                 stream.flush()
                 stream.close()
-                Toast.makeText(getActivity(), "saved", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "saved", Toast.LENGTH_SHORT).show()
             }
             catch (e:Exception){
                 e.printStackTrace()
-                Toast.makeText(getActivity(), "exception", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "exception", Toast.LENGTH_SHORT).show()
             }
         }
         else {
-            Toast.makeText(getActivity(), "Unable To Access", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, "Unable To Access", Toast.LENGTH_SHORT).show()
         }
     }
 }
