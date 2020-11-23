@@ -1,28 +1,35 @@
 package com.example.compression
 
-import android.app.Activity
+
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.*
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
+
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
-import com.github.chrisbanes.photoview.PhotoView
+
 
 class displayImage : Fragment() {
 
-    var imageByteArray:ByteArray? = null
-    private lateinit var image_view: PhotoView
+    private var imageURI:Uri?= null
+    private var ret_CroppedBitmap:Uri?= null
+    private lateinit var image_view: ImageView
     private lateinit var imageToDisplay:Bitmap
 
 
@@ -32,17 +39,27 @@ class displayImage : Fragment() {
 
         image_view = view.findViewById(R.id.imageView);
 
+        imageURI  = arguments?.getParcelable("image")
 
-        imageByteArray  = arguments?.getByteArray("image")
+        val intent = CropImage.activity(imageURI).getIntent(getContext()!!);
+        startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
 
-        imageToDisplay = BitmapFactory.decodeByteArray(imageByteArray,0, imageByteArray?.size!!)
+        //permissionsForSave()
 
-        permissionsForSave()
-
-        image_view.setImageBitmap(imageToDisplay)
         return view
     }
-    
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode==CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+            var result  = CropImage.getActivityResult(data);
+            ret_CroppedBitmap = result.getUri()
+            image_view.setImageURI(ret_CroppedBitmap)
+        }
+    }
+
+
+
     private fun permissionsForSave( ) {
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
             if(ActivityCompat.checkSelfPermission(getContext()!!,android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
@@ -93,7 +110,4 @@ class displayImage : Fragment() {
             Toast.makeText(getActivity(), "Unable To Access", Toast.LENGTH_SHORT).show()
         }
     }
-
-
-
 }

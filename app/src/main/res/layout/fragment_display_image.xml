@@ -6,9 +6,24 @@
     android:orientation="vertical"
     tools:context=".displayImage">
 
-    <com.github.chrisbanes.photoview.PhotoView
+    <com.theartofdev.edmodo.cropper.CropImageView
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cropImageView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        custom:cropGuidelines="on"
+        custom:cropShape="oval"
+        custom:cropBorderLineColor="@android:color/holo_red_dark"
+        custom:cropGuidelinesColor="@android:color/holo_green_dark"
+        custom:cropBorderLineThickness="5dp"/>
+
+    <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="500px"
+        android:layout_gravity="center"/>
+
+
 
 </LinearLayout>

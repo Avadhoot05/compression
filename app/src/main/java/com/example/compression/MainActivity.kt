@@ -1,22 +1,18 @@
 package com.example.compression
 
-import android.R.attr.bitmap
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import java.io.ByteArrayOutputStream
 import java.io.File
 
 
 class MainActivity : AppCompatActivity(),Communicator {
-
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,22 +26,13 @@ class MainActivity : AppCompatActivity(),Communicator {
         supportFragmentManager.beginTransaction().replace(R.id.FragmentContainer,fragment_displayButton).commit()
     }
 
-    override fun passDataCom(img: Bitmap,flag:Boolean){
+    override fun passDataCom(img: Uri){
 
-
-        val bytes = ByteArrayOutputStream()
-        if(flag)
-            img.compress(Bitmap.CompressFormat.PNG, 100, bytes)
-        else
-            img.compress(Bitmap.CompressFormat.JPEG, 40, bytes)
-
-        val byteArray = bytes.toByteArray()
 
         val bundle = Bundle()
-        bundle.putByteArray("image",byteArray)
+        bundle.putParcelable("image",img)
 
-        bytes.flush()
-        bytes.close()
+
         val transaction = this.supportFragmentManager.beginTransaction()
         val fragmentDisplayImage = displayImage()
 
@@ -73,6 +60,8 @@ class MainActivity : AppCompatActivity(),Communicator {
         if (!dir.exists())
             dir.mkdirs()
     }
+
+
 
     private fun permissionsForSave( ) {
         if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M){
